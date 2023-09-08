@@ -1,5 +1,6 @@
 extern crate regex;
-use core::num;
+use core::{num, slice};
+use std::fmt::Debug;
 
 use rand::prelude::*;
 use regex::Regex;
@@ -38,6 +39,61 @@ fn main() {
     condition();
     // 循环
     loop1();
+    // String
+    let str = "hello"; // str 是一个不可变的字符串切片
+    let mut s = String::from("hello"); // s 是一个可变的字符串
+                                       // push_str() 将字符串切片附加到String
+    s.push_str(" ,world!");
+
+    println!("s:{}", s);
+    let s2 = s.clone();
+    // let s2 = s; // s的所有权已经转移到s2,所以s不能再使用
+    println!("s2:{}", s2);
+    // 引用,不会获取所有权
+    // 切片是引用，所以不会获取所有权
+    let len = s.len();
+    let hello = &s[0..5]; // &s[..5]
+    let world = &s[7..len]; // &s[7..]
+    let slice = &s[..]; // &s[0..len]
+    let first_word = slice_world(&s);
+    // s.clear(); // clear 需要操作 s 的可变引用，而 first_word 是不可变引用，所以不能同时使用
+    println!(
+        "hello:{},world:{} slice:{} first_world:{}",
+        hello, world, slice, first_word
+    );
+    // 数组切片
+    let arr = [1, 2, 3, 4, 5];
+    let slice = &arr[..3];
+    assert_eq!(slice, &[1, 2, 3]);
+    // 结构体
+    let mut user1 = User {
+        username: String::from("yy13003"),
+        email: String::from("13003@qq.com"),
+        active: true,
+        sign_in_count: 1,
+    };
+    user1.email = String::from("13004@qq.com");
+    println!("user1:{}", user1.email);
+    // 结构体更新语法
+    let user2 = build_user(String::from("13005@qq.com"), String::from("yy13005"));
+    println!("user2:{}", user2.email);
+    let user3 = User {
+        email: String::from("13006@qq.com"),
+        ..user2
+    };
+    println!("user2:{} user3:{}", user2.email, user3.email);
+    // 元组结构体
+    let black = Color(0, 0, 0);
+    let white = Color(255, 255, 255);
+    let origin = Point(1920, 1080);
+    println!(
+        "black:{} white:{} origin:{}x{}",
+        black.0, white.0, origin.0, origin.1
+    );
+    // 单元结构
+
+    let unit = UnitStruct;
+    println!("unit:{:?}", unit);
 }
 
 fn another_function(x: i32, unit_label: char) {
@@ -126,6 +182,17 @@ fn loop1() {
     }
 }
 
+// 切片单词
+fn slice_world(s: &str) -> &str {
+    let bytes = s.as_bytes();
+    for (i, &item) in bytes.iter().enumerate() {
+        if item == b' ' {
+            return &s[..i]; // 返回第一个单词也可以写成 &s[0..i]
+        }
+    }
+    return &s[..]; // 返回整个字符串也可以写成 &s[..]
+}
+
 fn main1() {
     let n = 80; // 计算第40个斐波那契数
     println!("Rust Fibonacci({}): {}", n, fibonacci(n));
@@ -157,6 +224,28 @@ fn fibonacci(n: u64) -> u64 {
     }
     b
 }
+// 用户结构体
+struct User {
+    username: String,
+    email: String,
+    active: bool,
+    sign_in_count: u64,
+}
+// 构建用户结构体对象
+fn build_user(email: String, username: String) -> User {
+    User {
+        username, // 字段初始化简写语法 username: username
+        email,    // 字段初始化简写语法 email: email
+        active: true,
+        sign_in_count: 1,
+    }
+}
+// 元组结构体
+struct Color(i32, i32, i32);
+struct Point(i32, i32);
+// 单元结构
+#[derive(Debug)]
+struct UnitStruct;
 
 #[cfg(test)]
 mod tests {
