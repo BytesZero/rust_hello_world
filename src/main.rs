@@ -130,6 +130,13 @@ fn main() {
         4 => println!("You rolled a four!"),
         _ => println!("You rolled something else!"),
     }
+    // if let 匹配,只匹配一个分支
+    let dice_roll = 7;
+    if let 7 = dice_roll {
+        println!("You rolled a there!");
+    } else {
+        println!("You rolled something else!");
+    }
 }
 
 fn another_function(x: i32, unit_label: char) {
