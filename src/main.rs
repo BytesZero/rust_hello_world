@@ -118,7 +118,18 @@ fn main() {
     // 关联函数
     let sq = Rectangle::square(3);
     println!("sq:{}", sq.area());
-    
+    // 枚举
+    let four = IpAddrKind::IPV4;
+    let six = IpAddrKind::IPV6;
+    route(four);
+    route(six);
+    // match 匹配其他
+    let dice_roll = 6;
+    match dice_roll {
+        3 => println!("You rolled a three!"),
+        4 => println!("You rolled a four!"),
+        _ => println!("You rolled something else!"),
+    }
 }
 
 fn another_function(x: i32, unit_label: char) {
@@ -298,7 +309,31 @@ impl Rectangle {
         }
     }
 }
+// 枚举
+enum IpAddrKind {
+    IPV4,
+    IPV6,
+}
+// 枚举1
+enum IpAddrKind1 {
+    IPV4(String),
+    IPV6(String),
+}
 
+// 枚举2
+enum IpAddrKind2 {
+    IPV4(u8, u8, u8, u8),
+    IPV6(String),
+}
+// match 匹配枚举
+fn route(ip_type: IpAddrKind) {
+    match ip_type {
+        IpAddrKind::IPV4 => println!("route: IPV4"),
+        IpAddrKind::IPV6 => println!("route: IPV6"),
+    }
+}
+
+// 单元测试
 #[cfg(test)]
 mod tests {
     use super::*;
