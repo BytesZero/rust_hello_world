@@ -91,9 +91,34 @@ fn main() {
         black.0, white.0, origin.0, origin.1
     );
     // 单元结构
-
     let unit = UnitStruct;
     println!("unit:{:?}", unit);
+    // 结构体和方法
+    let rect = Rectangle {
+        width: 30,
+        height: 50,
+    };
+    let rect1 = Rectangle {
+        width: 10,
+        height: 40,
+    };
+
+    let rect2 = Rectangle {
+        width: 60,
+        height: 45,
+    };
+    println!(
+        "rect area:{} rect1:{} rect2:{}  \nrect can hold rect1:{} \nrect can hold rect2:{}",
+        rect.area(),
+        rect1.area(),
+        rect2.area(),
+        rect.can_hold(&rect1),
+        rect.can_hold(&rect2),
+    );
+    // 关联函数
+    let sq = Rectangle::square(3);
+    println!("sq:{}", sq.area());
+    
 }
 
 fn another_function(x: i32, unit_label: char) {
@@ -246,6 +271,33 @@ struct Point(i32, i32);
 // 单元结构
 #[derive(Debug)]
 struct UnitStruct;
+
+// 结构体和方法
+struct Rectangle {
+    width: u32,
+    height: u32,
+}
+
+// 实现
+impl Rectangle {
+    // 关联函数,计算面积
+    fn area(&self) -> u32 {
+        self.width * self.height
+    }
+
+    // 关联函数,检查是否可以容纳另一个矩形
+    fn can_hold(&self, other: &Rectangle) -> bool {
+        self.width > other.width && self.height > other.height
+    }
+
+    // 关联函数,创建一个正方形
+    fn square(size: u32) -> Self {
+        Self {
+            width: size,
+            height: size,
+        }
+    }
+}
 
 #[cfg(test)]
 mod tests {
