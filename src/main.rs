@@ -137,6 +137,31 @@ fn main() {
     } else {
         println!("You rolled something else!");
     }
+    let mut v: Vec<i32> = Vec::new();
+    v.push(1);
+    v.push(2);
+    v.push(3);
+    println!("v:{}", v[0]);
+    let v = vec![1, 2, 3];
+    println!("v0:{} v1:{} v2:{}", v[0], v[1], v[2]);
+    let two = &v[1];
+    println!("two:{}", two);
+    let three = v.get(2);
+    match three {
+        Some(three) => println!("three:{}", three),
+        None => println!("None"),
+    }
+    for i in &v {
+        println!("i:{}", i);
+    }
+
+    let mut v2 = vec![100, 200, 300];
+    for i in &mut v2 {
+        *i += 50;
+        println!("i:{}", i);
+    }
+    v2.push(400);
+    println!("v2:{}", v2[3]);
 }
 
 fn another_function(x: i32, unit_label: char) {
