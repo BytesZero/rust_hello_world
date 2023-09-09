@@ -1,5 +1,6 @@
 extern crate regex;
 use core::{num, slice};
+use std::collections::HashMap;
 use std::{fmt::Debug, ops::Add};
 
 use rand::prelude::*;
@@ -209,6 +210,31 @@ fn main() {
     assert_eq!(hola.contains("H"), true);
     let replace_str = hola.replace("H", "h");
     println!("replace_str:{}", replace_str);
+    // HashMap
+    let mut scores = HashMap::new();
+    scores.insert("Blue", 10);
+    scores.insert("Red", 15);
+    for (k, v) in scores.iter() {
+        println!("k:{} v:{}", k, v);
+    }
+    // 获取值
+    let blue_score = scores.get("Blue").copied().unwrap_or(0);
+    println!("blue_score:{}", blue_score);
+    // 更新值
+    scores.insert("Blue", 25);
+    println!("scores:{:?}", scores);
+    // 仅当键没有对应值时插入
+    scores.entry("Yellow").or_insert(50);
+    scores.entry("Blue").or_insert(50);
+    println!("scores:{:?}", scores);
+    // 根据旧值更新一个值
+    let text = "hello world wonderful world";
+    let mut map = HashMap::new();
+    for word in text.split_whitespace() {
+        let count = map.entry(word).or_insert(0);
+        *count += 1;
+    }
+    println!("map:{:?}", map);
 }
 
 fn another_function(x: i32, unit_label: char) {
