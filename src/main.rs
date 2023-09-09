@@ -1,6 +1,6 @@
 extern crate regex;
 use core::{num, slice};
-use std::fmt::Debug;
+use std::{fmt::Debug, ops::Add};
 
 use rand::prelude::*;
 use regex::Regex;
@@ -162,6 +162,53 @@ fn main() {
     }
     v2.push(400);
     println!("v2:{}", v2[3]);
+    // 字符串
+    let s = String::new();
+    println!("empty s:{}", s);
+    let data = "initial contents";
+    println!("data:{}", data);
+    let s = data.to_string();
+    println!("s1:{}", s);
+    let s = "initial contents".to_string();
+    println!("s2:{}", s);
+    let s = String::from("initial contents");
+    println!("s3:{}", s);
+    let hello = String::from("السلام عليكم");
+    let hello = String::from("Dobrý den");
+    let hello = String::from("Hello");
+    let hello = String::from("שָׁלוֹם");
+    let hello = String::from("नमस्ते");
+    let hello = String::from("こんにちは");
+    let hello = String::from("안녕하세요");
+    let hello = String::from("你好");
+    let hello = String::from("Olá");
+    let hello = String::from("Здравствуйте");
+    let hello = String::from("Hola");
+    println!("hello:{}", hello);
+    let s = String::from("Start");
+    let s2 = "End";
+    // let ss = s.add(&s2); // add() 方法获取一个字符串，这里s 失去了所有权，而 s2 传递的是一个引用，所以 s 将失效，s2 仍然有效
+    let s3 = s + "_" + &s2;
+    // println!("s3:{} s:{} s2{}", s3, s, s2); // s2 仍然有效,因为 s2 是 &str 类型,不是 &String 类型
+    println!("s3:{} s2:{}", s3, s2); // s2 仍然有效,因为 s2 是 &str 类型,不是 &String 类型
+    let s4 = format!("{}-{}", s2, s3); // format! 宏不会获取任何参数的所有权
+    println!("s4:{} s3:{} s2:{}", s4, s3, s2); // 所以 s3和s2 仍然有效
+    let hola = String::from("Hola");
+    // let a = &hola[0];// 这里会报错，因为 Rust 不允许我们索引 String
+    let a = &hola[..1]; // 这里使用字符串切片，非常明确，所以不会报错
+    println!("a:{}", a);
+    let chars = hola.chars();
+    for c in chars {
+        println!("c:{}", c);
+    }
+    let bytes = hola.bytes();
+    for b in bytes {
+        println!("b:{}", b);
+    }
+    // 字符串的一些处理方法
+    assert_eq!(hola.contains("H"), true);
+    let replace_str = hola.replace("H", "h");
+    println!("replace_str:{}", replace_str);
 }
 
 fn another_function(x: i32, unit_label: char) {
