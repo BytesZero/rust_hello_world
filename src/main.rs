@@ -1,6 +1,8 @@
 extern crate regex;
 use core::{num, slice};
 use std::collections::HashMap;
+use std::fs::{self, File};
+use std::io::{Error, ErrorKind, Read};
 use std::{fmt::Debug, ops::Add};
 
 use rand::prelude::*;
@@ -235,6 +237,41 @@ fn main() {
         *count += 1;
     }
     println!("map:{:?}", map);
+    // 错误和异常
+    // panic!("crash and burn"); // panic! 宏会打印一个错误信息，展开并清理调用栈，然后退出程序
+    let get_file_result = File::open("hello.txt");
+    let get_file = match get_file_result {
+        Ok(file) => file,
+        Err(error) => match error.kind() {
+            ErrorKind::NotFound => match File::create("hello.txt") {
+                Ok(fc) => {
+                    println!("File created successfully: {:?}", fc);
+                    fc
+                }
+                Err(e) => panic!("Tried to create file but there was a problem: {:?}", e),
+            },
+            _ => panic!("There was a problem opening the file: {:?}", error),
+        },
+    };
+    let username = read_username_from_file().unwrap();
+    let username = read_username_from_file2().unwrap();
+    println!("username:{}", username);
+    let l = last_char("hello").unwrap();
+    println!("l:{}", l);
+}
+
+fn read_username_from_file() -> Result<String, Error> {
+    let mut username = String::new();
+    File::open("hello.txt")?.read_to_string(&mut username)?;
+    Ok(username)
+}
+
+fn read_username_from_file2() -> Result<String, Error> {
+    fs::read_to_string("hello.txt")
+}
+
+fn last_char(s: &str) -> Option<char> {
+    s.lines().next()?.chars().last()
 }
 
 fn another_function(x: i32, unit_label: char) {
