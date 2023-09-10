@@ -1,5 +1,6 @@
 extern crate regex;
 use core::{num, slice};
+use std::cmp::PartialOrd;
 use std::collections::HashMap;
 use std::fs::{self, File};
 use std::io::{Error, ErrorKind, Read};
@@ -258,6 +259,24 @@ fn main() {
     println!("username:{}", username);
     let l = last_char("hello").unwrap();
     println!("l:{}", l);
+    // 泛型
+    let number_list = vec![34, 50, 25, 100, 65];
+    let large = largest(&number_list);
+    println!("large number:{}", large);
+    let char_list = vec!['k', 'y', 'l', 'e', 'w', 'a', 'n', 'g'];
+    let large = largest(&char_list);
+    println!("large char:{}", large);
+}
+
+// 找出最大数
+fn largest<T: PartialOrd>(list: &[T]) -> &T {
+    let mut large = &list[0];
+    for num in list {
+        if num > large {
+            large = num;
+        }
+    }
+    large
 }
 
 fn read_username_from_file() -> Result<String, Error> {
