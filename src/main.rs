@@ -266,6 +266,126 @@ fn main() {
     let char_list = vec!['k', 'y', 'l', 'e', 'w', 'a', 'n', 'g'];
     let large = largest(&char_list);
     println!("large char:{}", large);
+    // 生命周期是确保引用在有效期内是有效的
+    // let r;
+    // {
+    //     let x = 5;
+    //     r = &x; // 这里会报错，因为 x 的生命周期在这里已经结束了
+    //
+    // }
+    // println!("r:{}", r);
+    let s1 = String::from("asdfgasfdqwe");
+    let s2 = "jdikenj3";
+    let result = longest(&s1, &s2);
+    println!("result:{}", result);
+    let result;
+    {
+        let s3 = String::from("asd");
+        result = longest(s1.as_str(), s3.as_str());
+        println!("result:{}", result); // 这里不会导致报错，因为 s3 的生命周期在这里还没有结束
+    }
+    // println!("result:{}", result);// 这里会导致报错，因为 s3  的生命周期在上面的作用域内已经结束了
+    // 闭包
+    let mut list = [
+        Rectangle {
+            width: 10,
+            height: 1,
+        },
+        Rectangle {
+            width: 3,
+            height: 5,
+        },
+        Rectangle {
+            width: 7,
+            height: 12,
+        },
+    ];
+
+    let mut sort_operations = vec![];
+    let value = String::from("by key called");
+
+    list.sort_by_key(|r| {
+        sort_operations.push(&value);
+        r.width
+    });
+    println!("{:#?}", list);
+    println!("{:#?}", sort_operations);
+    println!("value:{}", value);
+    // 迭代器
+    let v1 = vec![1, 2, 3];
+    let mut v1_iter = v1.iter();
+    // let mut v2_iter = v1.iter_mut();
+    // let mut v3_iter = v1.into_iter();
+    // for val in v1_iter {
+    //     println!("Got: {}", val);
+    // }
+    assert_eq!(v1_iter.next(), Some(&1));
+    assert_eq!(v1_iter.next(), Some(&2));
+    assert_eq!(v1_iter.next(), Some(&3));
+    // assert_eq!(v1_iter.next(), Some(&4)); // 这里迭代器已经结束了，所以会报错
+    assert_eq!(v1_iter.next(), None);
+    // 智能指针
+    let a = 5;
+    let b = MyBox::new(a);
+    let c = Box::new(a);
+    assert_eq!(5, a);
+    // assert_eq!(5, b); // 这里会报错，因为 MyBox 需要调用解引用运算符
+    assert_eq!(5, *b); // 这里会调用*解引用运算符,相当于调用了 *(b.deref())
+    let m = String::from("Rust");
+    println!("m:{}", &m); // 这里虽然使用了 &m，但是 Rust 会自动调用解引用运算符，所以不会报错
+    let mut num = 42;
+
+    let ref_num = &num; // 不可变引用
+                        // let mut_ref_num = &mut num; // 可变引用.这里会报错，因为 ref_num 已经获取了 num 的不可变引用，所以不能再获取 num 的可变引用
+
+    println!("ref_num: {}", ref_num);
+    // println!("mut_ref_num: {}", mut_ref_num);
+
+    let s5 = MyString {
+        string: String::from("hello"),
+    };
+    println!("s5:{}", s5.string);
+    drop(s5);
+    println!("s5 drop"); // 这里会报错，因为 s5 已经被 drop 了
+}
+
+use std::ops::Deref;
+// 定义 MyBox
+struct MyBox<T>(T);
+
+// 实现 MyBox
+impl<T> MyBox<T> {
+    fn new(x: T) -> MyBox<T> {
+        MyBox(x)
+    }
+}
+// 实现 Deref trait
+impl<T> Deref for MyBox<T> {
+    type Target = T;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+// 自定义String
+struct MyString {
+    string: String,
+}
+
+impl Drop for MyString {
+    fn drop(&mut self) {
+        println!("dropping MyString!");
+    }
+}
+
+// 找出长度最大的字符串
+fn longest<'a>(s1: &'a str, s2: &'a str) -> &'a str {
+    if s1.len() > s2.len() {
+        s1
+    } else {
+        s2
+    }
 }
 
 // 找出最大数
@@ -445,6 +565,7 @@ struct Point(i32, i32);
 struct UnitStruct;
 
 // 结构体和方法
+#[derive(Debug)]
 struct Rectangle {
     width: u32,
     height: u32,
@@ -494,6 +615,10 @@ fn route(ip_type: IpAddrKind) {
     }
 }
 
+fn add_two(a: i32) -> i32 {
+    a + 2
+}
+
 // 单元测试
 #[cfg(test)]
 mod tests {
@@ -502,5 +627,24 @@ mod tests {
     #[test]
     fn exploration() {
         assert_eq!(fibonacci(80), 23416728348467685);
+    }
+    #[test]
+    #[ignore = "reason"]
+    fn another() {
+        panic!("Make this test fail")
+    }
+    #[test]
+    fn add_two_and_two() {
+        assert_eq!(4, add_two(2));
+    }
+
+    #[test]
+    fn add_three_and_two() {
+        assert_eq!(5, add_two(3));
+    }
+
+    #[test]
+    fn one_hundred() {
+        assert_eq!(102, add_two(100));
     }
 }
