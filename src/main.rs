@@ -387,6 +387,8 @@ fn main() {
         handle.join().unwrap();
     }
     println!("counter:{}", *counter.lock().unwrap());
+    // 模式匹配语法
+    pattern_match_syntax();
 }
 
 use std::ops::Deref;
@@ -657,6 +659,63 @@ fn route(ip_type: IpAddrKind) {
 
 fn add_two(a: i32) -> i32 {
     a + 2
+}
+
+// 模式匹配语法
+fn pattern_match_syntax() {
+    let x = 1;
+    match x {
+        1 => println!("one"),
+        2 => println!("two"),
+        3 => println!("three"),
+        _ => println!("anything"),
+    }
+
+    let x = Some(6);
+    let y = 10;
+    match x {
+        Some(5) => println!("some 5"),
+        Some(6) | Some(7) => println!("some 6 or 7"),
+        Some(y) => println!("some y:{}", y),
+        _ => println!("anything"),
+    }
+    println!("x:{:?} y:{}", x, y);
+
+    match y {
+        1..=5 => println!("1..5"),
+        6..=10 => println!("6..=10"),
+        _ => println!("anything"),
+    }
+
+    let m = 'z';
+    match m {
+        'a'..='q' => println!("m on a~q"),
+        'p'..='z' => println!("m on p~z"),
+        _ => println!("default not"),
+    }
+
+    let w = Rectangle {
+        width: 32,
+        height: 43,
+    };
+
+    let Rectangle {
+        width: x,
+        height: y,
+    } = w;
+    println!("rectangle x:{} y:{}", x, y);
+
+    let Rectangle { width, height } = w;
+    println!("rectangle2 x:{} y:{}", width, height);
+
+    let ip = IpAddrKind2::IPV4(127, 168, 0, 1);
+    match ip {
+        IpAddrKind2::IPV4(a, b, c, d) => println!("IPV4:{a}.{b}.{c}.{d}"),
+        // IpAddrKind2::IPV4(a, b, c, d) if a == 127 => println!("IPV4:{a}.{b}.{c}.{d}"),
+        // IpAddrKind2::IPV4(a, b, ..) => println!("IPV4:{a}.{b}"),
+        IpAddrKind2::IPV6(addr) => println!("IPV4:{}", addr),
+        // _ => println!("default"),
+    }
 }
 
 // 单元测试
