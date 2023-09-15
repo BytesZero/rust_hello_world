@@ -4,7 +4,9 @@ use std::cmp::PartialOrd;
 use std::collections::HashMap;
 use std::fs::{self, File};
 use std::io::{Error, ErrorKind, Read};
-use std::{fmt::Debug, ops::Add};
+use std::sync::{mpsc, Arc, Mutex};
+use std::time::Duration;
+use std::{fmt::Debug, ops::Add, thread};
 
 use rand::prelude::*;
 use regex::Regex;
@@ -347,6 +349,44 @@ fn main() {
     println!("s5:{}", s5.string);
     drop(s5);
     println!("s5 drop"); // 这里会报错，因为 s5 已经被 drop 了
+
+    // 多线程
+    let handle = thread::spawn(|| {
+        println!("Hello from a thread!");
+    });
+    let handle = thread::spawn(|| {
+        for _ in 1..10 {
+            println!("Hello from a thread!");
+            thread::sleep(Duration::from_millis(1));
+        }
+    });
+    println!("Hello from main thread!");
+    handle.join().unwrap(); // 这里等待线程结束
+                            // 线程间发送消息
+    let (tx, rx) = mpsc::channel();
+    thread::spawn(move || {
+        let val = String::from("hi");
+        tx.send(val).unwrap();
+    });
+    let msg = rx.recv().unwrap();
+    println!("thread msg:{}", msg);
+    // 线程间共享状态
+    let counter = Arc::new(Mutex::new(5));
+    let mut handles = vec![];
+    for _ in 0..10 {
+        let counter = Arc::clone(&counter);
+        let handle = thread::spawn(move || {
+            let mut num = counter.lock().unwrap();
+            *num += 1;
+            println!("num:{}", num);
+        });
+        handles.push(handle);
+    }
+
+    for handle in handles {
+        handle.join().unwrap();
+    }
+    println!("counter:{}", *counter.lock().unwrap());
 }
 
 use std::ops::Deref;
